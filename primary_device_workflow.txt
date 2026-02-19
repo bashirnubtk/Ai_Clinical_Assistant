@@ -1,0 +1,30 @@
+--- নতুন রিপোজিটরি সেটআপ ও প্রফেশনাল ওয়ার্কফ্লো ---
+
+১. পুরনো গিটের হিস্ট্রি মুছে ফেলা (সতর্কতা: এটি করলে আগের সব লোকাল হিস্ট্রি চলে যাবে):
+   rd /s /q .git   (Windows CMD/PowerShell এর জন্য)
+   
+২. নতুন করে গিট শুরু (Re-initialize):
+   git init
+
+৩. নতুন রিমোট ইউআরএল যুক্ত করা:
+   git remote add origin https://github.com/bashirnubtk/Ai_Clinical_Assistant.git
+
+৪. 'dev' ব্রাঞ্চ তৈরি এবং প্রথম কমিট:
+   git checkout -b dev
+   git add .
+   git commit -m "Initial commit: Setup project on dev branch"
+
+৫. গিটহাবে 'dev' ব্রাঞ্চে প্রথম পুশ:
+   git push -u origin dev
+
+--- নিয়মিত কাজের আপডেট দেওয়ার নিয়ম ---
+১. কাজের অবস্থা দেখা: git status
+২. ফাইল যুক্ত করা: git add .
+৩. আপডেট কমিট: git commit -m "Update: [আপনার কাজের বর্ণনা]"
+৪. ডেভ ব্রাঞ্চে পুশ: git push origin dev
+
+--- ফাইনাল আপডেট মেইন (Main) ব্রাঞ্চে নেওয়া ---
+১. মেইন ব্রাঞ্চে সুইচ করা: git checkout main (যদি না থাকে তবে git checkout -b main)
+২. ডেভ ব্রাঞ্চের কাজ মেইনে আনা: git merge dev
+৩. মেইন ব্রাঞ্চে পুশ: git push origin main
+৪. আবার ডেভে ফিরে আসা: git checkout dev

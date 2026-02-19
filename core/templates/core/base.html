@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareNexus AI - Smart Healthcare</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Hind Siliguri', sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50">
+
+    <nav class="bg-blue-600 p-4 text-white shadow-lg sticky top-0 z-50">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="{% url 'home' %}" class="text-2xl font-bold flex items-center gap-2 tracking-tight">
+                <span class="text-3xl">🏥</span> CareNexus AI
+            </a>
+
+            <div class="flex items-center gap-6">
+                <a href="{% url 'home' %}" class="hover:text-blue-200 transition font-medium">হোম</a>
+                <a href="{% url 'ai_agent' %}" class="hover:text-blue-200 transition font-medium">AI এজেন্ট</a>
+
+                <div class="flex items-center gap-4">
+                    {% if user.is_authenticated %}
+                        <div class="flex items-center bg-white/20 px-4 py-2 rounded-full gap-2 border border-white/30 shadow-sm">
+                            <div class="w-8 h-8 bg-white text-blue-600 rounded-full flex items-center justify-center font-black">
+                                {% if user.is_superuser %} A {% else %} U {% endif %}
+                            </div>
+                            <span class="text-white font-bold">
+                                {% if user.is_superuser %} Hospital Admin {% else %} {{ user.username }} {% endif %}
+                            </span>
+                        </div>
+                        <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl font-bold transition shadow-lg">লগআউট</a>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="text-white font-bold hover:underline">লগইন</a>
+                        <a href="{% url 'register' %}" class="bg-white text-blue-600 px-6 py-2 rounded-xl font-bold shadow-md hover:bg-gray-100 transition">সাইন-আপ</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto mt-4 px-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="p-4 rounded-xl mb-4 shadow-md {% if message.tags == 'success' %}bg-green-100 text-green-700 border-l-4 border-green-500{% else %}bg-red-100 text-red-700 border-l-4 border-red-500{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <div class="container mx-auto mt-6 px-4">
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="mt-20 py-10 bg-gray-100 text-center text-gray-500 text-sm border-t">
+        <p>&copy; 2026 CareNexus AI Smart Hospital. All rights reserved.</p>
+    </footer>
+
+</body>
+</html>

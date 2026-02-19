@@ -1,0 +1,25 @@
+--- পরিবেশ যাচাই ও সেটআপ নির্দেশিকা ---
+
+১. পাইথন চেক করুন:
+   python --version
+
+২. ভার্চুয়াল এনভায়রনমেন্ট তৈরি (ভুল করবেন না, এটি venv):
+   python -m venv venv
+
+৩. ভার্চুয়াল এনভায়রনমেন্ট সচল করা:
+   .\venv\Scripts\activate
+
+উইন্ডোজ সিকিউরিটি পলিসি ফিক্স করা (Execution Policy)
+     Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+
+
+৪. জ্যাঙ্গো ও অন্যান্য রিকুয়্যারমেন্টস ইনস্টল করা:
+   pip install django
+   (যদি requirements.txt থাকে তবে: pip install -r requirements.txt)
+
+৫. জ্যাঙ্গো ডাটাবেস মাইগ্রেশন:
+   python manage.py makemigrations
+   python manage.py migrate
+
+৬. সার্ভার রান করে চেক করা:
+   python manage.py runserver

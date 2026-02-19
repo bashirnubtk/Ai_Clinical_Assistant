@@ -1,0 +1,31 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-8 rounded-xl shadow-md">
+    <h2 class="text-2xl font-bold text-center mb-6 text-blue-700">Patient Registration</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-4">
+            <label class="block text-gray-700">Full Name</label>
+            <input type="text" name="full_name" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter your name" required>
+        </div>
+        <div class="mb-4">
+            <label class="block text-gray-700">Mobile Number</label>
+            <input type="text" name="mobile" class="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-blue-500" placeholder="017XXXXXXXX" required>
+        </div>
+        <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition">Register Now</button>
+    </form>
+    <p class="mt-4 text-center text-gray-600">
+        Already have an account? <a href="{% url 'login' %}" class="text-blue-500 font-bold">Login here</a>
+    </p>
+</div>
+{% endblock %}

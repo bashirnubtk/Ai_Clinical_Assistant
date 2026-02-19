@@ -1,0 +1,131 @@
+CareNexus AI Hospital Assistant - Full Setup Guide & Git Workflow
+( সম্পূর্ণ সেটআপ, কমান্ড, গিটহাব গাইড এবং README কনটেন্ট)
+
+১. প্রজেক্টের সংক্ষিপ্ত বর্ণনা
+প্রজেক্ট নাম: CareNexus AI Hospital Assistant
+বর্ণনা: একটি Django-ভিত্তিক হাসপাতাল ম্যানেজমেন্ট ওয়েব অ্যাপ্লিকেশন। এখানে রোগী রেজিস্ট্রেশন, লগইন, অ্যাডমিন প্যানেল এবং একটি AI এজেন্ট আছে যা OpenRouter (Llama মডেল) ব্যবহার করে রোগীর প্রশ্নের উত্তর দেয়। AI রোগীর সমস্যা শুনে ডাক্তার সাজেশন, রক্তদাতা খোঁজা, ডাক্তারের অ্যাভেলেবিলিটি, টেস্ট ফি ইত্যাদি তথ্য দেয়। অ্যাডমিন সব দেখতে পারে, রোগী শুধু ডাক্তার/রক্তদাতা তথ্য দেখে।
+গ্রুপ মেম্বার:
+- Bashir Alam (লিড ডেভেলপার)
+- গ্রুপ মেম্বার ১ (নাম + রোল)
+- গ্রুপ মেম্বার ২ (নাম + রোল)
+
+২. নতুন ল্যাপটপে প্রজেক্ট চালানোর ধাপ (শুধু Python ইনস্টল থাকলে)
+কমেন্ট: প্রজেক্ট ফোল্ডার (Clinical_Assistant) কপি করে নতুন ল্যাপটপে পেস্ট করো। তারপর PowerShell বা Command Prompt খোলো। নিচের কমান্ডগুলো ধাপে ধাপে রান করো।
+
+১. Execution Policy সেট করো (PowerShell-এর জন্য, যাতে venv অ্যাকটিভ হয়)
+   Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process
+
+২. venv তৈরি করো (যদি পুরনো venv কপি না হয়ে থাকে)
+   python -m venv venv
+
+৩. venv অ্যাকটিভ করো
+   .\venv\Scripts\activate
+
+৪. প্রয়োজনীয় প্যাকেজ ইনস্টল করো (django + requests)
+   pip install django requests
+
+৫. ডাটাবেস মাইগ্রেশন করো (ডাটা স্ট্রাকচার সেটআপ করতে)
+   python manage.py makemigrations
+   python manage.py migrate
+
+৬. সার্ভার চালু করো
+   python manage.py runserver
+
+৭. ব্রাউজারে খোলো
+   http://127.0.0.1:8000/
+
+৮. OpenRouter API Key চেক করো (যদি কাজ না করে)
+   https://openrouter.ai/settings/keys → লগইন করে কী কপি করে views.py-এ পেস্ট করো।
+
+কমেন্ট: যদি এরর আসে, টার্মিনালের লাল লেখা কপি করে দেখাও। সবকিছু ঠিক থাকলে প্রজেক্ট চালু হবে।
+
+৩. গিটহাবে পাবলিক রেপো সেটআপ ও ধাপে ধাপে পুশ করার গাইড
+কমেন্ট: গিটহাবে হুট করে সব আপলোড না করে ধাপে ধাপে করো। প্রতিদিন/প্রতি চেঞ্জে কমিট করো। পাবলিক রেপো করলে সবাই দেখতে পারবে।
+
+ধাপ ১: গিটহাবে নতুন রেপো তৈরি করো
+   - গিটহাবে লগইন করো
+   - "New" ক্লিক করো
+   - রেপো নাম: CareNexus-AI-Hospital-Assistant
+   - Public করো (কোনো সিক্রেট না রাখো)
+   - Create Repository ক্লিক করো
+
+ধাপ ২: লোকালে গিট ইনিশিয়ালাইজ করো
+   git init
+
+ধাপ ৩: গিটহাব রেপো যোগ 
+   git remote add origin https://github.com/bashirnubtk/CareNexus-AI-Hospital-Assistant
+
+ধাপ ৪: প্রথম কমিট করো (কোর ফাইলগুলো)
+   git add manage.py CareNexus/ core/
+   git commit -m "Initial project setup: Django structure, models, views, templates"
+   git push -u origin main
+
+ধাপ ৫: .gitignore তৈরি করো (venv, pycache, db.sqlite3 ইগনোর করার জন্য)
+   প্রজেক্টে .gitignore নামে ফাইল তৈরি করো এবং এই লাইনগুলো পেস্ট করো:
+   venv/
+   __pycache__/
+   *.pyc
+   db.sqlite3
+
+   git add .gitignore
+   git commit -m "Added .gitignore to exclude venv and database"
+   git push
+
+ধাপ ৬: প্রতিদিন/প্রতি চেঞ্জে আপডেট করো
+   git add .
+   git commit -m "Updated AI prompt for better responses"
+   git push
+
+কমেন্ট: গ্রুপ মেম্বারদের অ্যাড করো → গিটহাবে Settings → Collaborators → তাদের ইউজারনেম যোগ করো।
+
+৪. README.md ফাইলের কনটেন্ট (প্রজেক্ট ফোল্ডারে README.md নামে তৈরি করো)
+```markdown
+# CareNexus AI Hospital Assistant
+
+## Project Overview
+CareNexus is a Django-based web application for hospital management with an AI-powered assistant. The AI helps patients find doctors, blood donors, test fees, and availability using natural language queries in Bengali. Admins have full access, while patients see limited info.
+
+## Group Members
+- Bashir Alam (Lead Developer)
+- [Group Member 1 Name] – [Role]
+- [Group Member 2 Name] – [Role]
+
+## Key Features
+- User Registration & Login (Mobile for patients, password '000' for admin)
+- AI Agent (OpenRouter Llama): Suggests doctors based on symptoms, finds blood donors, shows availability
+- Role-Based Access: Admins see patient lists, patients see doctors & donors
+- Doctor List View with specialty & schedule
+- Blood Bank View with group & contact
+
+## Technologies
+- Backend: Django
+- AI: OpenRouter (Llama 3-8B-Instruct free model)
+- Database: SQLite (default)
+- Frontend: HTML/CSS (basic templates)
+
+## Setup Instructions (New Machine)
+1. Install Python 3.10+
+2. Copy project folder
+3. Open terminal in folder
+4. Set policy: `Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope Process`
+5. Create venv: `python -m venv venv`
+6. Activate: `.\venv\Scripts\activate`
+7. Install packages: `pip install django requests`
+8. Migrate DB: `python manage.py makemigrations` → `python manage.py migrate`
+9. Run server: `python manage.py runserver`
+10. Open: http://127.0.0.1:8000/
+11. API Key: Get from https://openrouter.ai/settings/keys and update in core/views.py
+
+## Future Plans
+- Add bed management, department info, test fees
+- Improve AI for symptom-based doctor recommendation
+- Deploy on cloud (Heroku/Vercel)
+
+## How to Contribute
+1. Clone repo
+2. Create branch: `git checkout -b feature-name`
+3. Commit changes: `git commit -m "Added new feature"`
+4. Push: `git push origin feature-name`
+5. Open Pull Request
+
+License: MIT

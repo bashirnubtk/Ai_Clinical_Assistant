@@ -1,0 +1,21 @@
+--- সেকেন্ডারি ডিভাইসে প্রথমবার ক্লোন করা ---
+
+১. রিপোজিটরি ক্লোন করা:
+   git clone https://github.com/bashirnubtk/Ai_Clinical_Assistant.git
+   cd Ai_Clinical_Assistant
+
+২. সকল ব্রাঞ্চ চেক করা:
+   git fetch --all
+
+৩. 'dev' ব্রাঞ্চে সুইচ করা:
+   git checkout dev
+
+--- প্রতিদিনের কাজের নিয়ম ---
+
+১. কাজ শুরুর আগে লেটেস্ট কোড নামিয়ে নেওয়া:
+   git pull origin dev
+
+২. নতুন কাজ শেষে পুশ করা:
+   git add .
+   git commit -m "Work from secondary device"
+   git push origin dev

@@ -1,0 +1,68 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-md mx-auto bg-white p-10 rounded-3xl shadow-2xl">
+    <h2 class="text-3xl font-bold text-center text-blue-800 mb-8">Login Portal</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="bg-red-100 text-red-700 p-3 rounded-xl mb-4 text-center border border-red-200">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="POST" autocomplete="off">
+        {% csrf_token %}
+        
+        <div class="mb-6">
+            <label class="block font-bold text-gray-600 mb-2">Select Role:</label>
+            <select name="user_type" id="user_type" onchange="toggleFields()" class="w-full p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500 bg-gray-50">
+                <option value="patient">Patient</option>
+                <option value="admin">Hospital Admin</option>
+            </select>
+        </div>
+
+        <div id="patient_box">
+            <label class="block font-bold text-gray-600 mb-2">Mobile Number:</label>
+            <input type="text" name="mobile" id="patient_mobile" 
+                   class="w-full p-3 border rounded-xl mb-4 focus:ring-2 focus:ring-blue-400 outline-none" 
+                   placeholder="017xxxxxxxx" 
+                   autocomplete="one-time-code"> </div>
+
+        <div id="admin_box" class="hidden">
+            <label class="block font-bold text-gray-600 mb-2">Admin Password:</label>
+            <input type="password" name="admin_pass" id="admin_password"
+                   class="w-full p-3 border rounded-xl mb-4 focus:ring-2 focus:ring-blue-400 outline-none" 
+                   placeholder="Enter password"
+                   autocomplete="new-password">
+        </div>
+
+        <button type="submit" class="w-full bg-blue-600 text-white py-4 rounded-xl font-bold hover:bg-blue-800 transition shadow-lg">
+            Login Now
+        </button>
+    </form>
+    
+    <p class="text-center mt-6 text-gray-500">
+        অ্যাকাউন্ট নেই? <a href="{% url 'register' %}" class="text-blue-600 font-bold hover:underline">রেজিস্ট্রেশন করুন</a>
+    </p>
+</div>
+
+<script>
+    function toggleFields() {
+        var type = document.getElementById('user_type').value;
+        var pBox = document.getElementById('patient_box');
+        var aBox = document.getElementById('admin_box');
+        
+        if (type === 'admin') {
+            pBox.classList.add('hidden');
+            aBox.classList.remove('hidden');
+            document.getElementById('patient_mobile').value = ""; // বক্স ক্লিয়ার করা
+        } else {
+            pBox.classList.remove('hidden');
+            aBox.classList.add('hidden');
+            document.getElementById('admin_password').value = ""; // বক্স ক্লিয়ার করা
+        }
+    }
+</script>
+{% endblock %}

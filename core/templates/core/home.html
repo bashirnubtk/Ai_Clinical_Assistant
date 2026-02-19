@@ -1,0 +1,35 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-12">
+    <div class="text-center mb-16">
+        <h1 class="text-6xl font-black text-blue-900 mb-4">CareNexus <span class="text-blue-500">Smart Hub</span></h1>
+        <p class="text-lg text-gray-600">আপনার প্রয়োজনীয় সেবাটি নির্বাচন করুন</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+        
+        <a href="{% url 'ai_agent' %}" class="group relative bg-white p-12 rounded-3xl shadow-2xl border-2 border-transparent hover:border-blue-500 transition-all duration-300 text-center">
+            <div class="text-6xl mb-6 group-hover:scale-110 transition-transform">🤖</div>
+            <h3 class="text-3xl font-bold text-gray-800 mb-4">AI Agent</h3>
+            <p class="text-gray-500">সরাসরি সাহায্য নিন (উন্মুক্ত)</p>
+            <div class="mt-6 inline-block bg-blue-600 text-white px-6 py-2 rounded-full font-bold">এখনি কথা বলুন →</div>
+        </a>
+
+        <a href="{% if user.is_authenticated %}{% url 'doctor_list' %}{% else %}{% url 'login' %}{% endif %}" class="group relative bg-white p-12 rounded-3xl shadow-2xl border-2 border-transparent hover:border-green-500 transition-all duration-300 text-center">
+            <div class="text-6xl mb-6 group-hover:scale-110 transition-transform">👨‍⚕️</div>
+            <h3 class="text-3xl font-bold text-gray-800 mb-4">Expert Doctor</h3>
+            <p class="text-gray-500">সিরিয়াল নিতে লগইন করুন</p>
+            <div class="mt-6 inline-block bg-green-600 text-white px-6 py-2 rounded-full font-bold">তালিকা দেখুন →</div>
+        </a>
+
+        <a href="{% if user.is_authenticated %}{% url 'blood_bank' %}{% else %}{% url 'login' %}{% endif %}" class="group relative bg-white p-12 rounded-3xl shadow-2xl border-2 border-transparent hover:border-red-500 transition-all duration-300 text-center">
+            <div class="text-6xl mb-6 group-hover:scale-110 transition-transform">🩸</div>
+            <h3 class="text-3xl font-bold text-gray-800 mb-4">Blood Bank</h3>
+            <p class="text-gray-500">রক্তদাতার তথ্যের জন্য লগইন</p>
+            <div class="mt-6 inline-block bg-red-600 text-white px-6 py-2 rounded-full font-bold">রক্ত খুঁজুন →</div>
+        </a>
+
+    </div>
+</div>
+{% endblock %}
