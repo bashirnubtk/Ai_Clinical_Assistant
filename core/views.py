@@ -1,6 +1,4 @@
 import os
-import requests
-import re
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.models import User
 from django.contrib import messages
@@ -8,54 +6,47 @@ from django.contrib.auth import login, logout
 from django.http import JsonResponse
 from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
-from .models import PatientProfile, Doctor, BloodDonor, HospitalService
 
-# ────────────────────────────────────────────────
-# API & System Configuration
-# ────────────────────────────────────────────────
+# মডেল এবং এআই ইঞ্জিন ইম্পোর্ট
+from .models import PatientProfile, Doctor, BloodDonor, HospitalService
+from .ai_engine import process_ai_command
+
+# ────────────────────────────────────────────────────────────────────────────────
+# CONFIGURATION & GLOBAL VARIABLES
+# ────────────────────────────────────────────────────────────────────────────────
 OPENROUTER_API_KEY = settings.OPENROUTER_API_KEY
 MODEL_NAME = "openrouter/free"
 
-SYSTEM_PROMPT = """আপনি CareNexus হাসপাতালের একজন অত্যন্ত দক্ষ AI সহকারী।
-আপনার কাজ হলো রোগীদের তথ্য দিয়ে সাহায্য করা এবং অ্যাডমিনকে ডেটাবেস ম্যানেজ করতে সাহায্য করা।
+SYSTEM_PROMPT = """আপনি CareNexus হাসপাতালের একজন অত্যন্ত দক্ষ AI সহকারী। 
+আপনার কাজ হলো রোগীদের ধাপে ধাপে সাহায্য করা। রোগী কোনো সমস্যার কথা বললে তাকে দয়া দেখিয়ে সেই বিষয়ের ডাক্তারের নাম সাজেস্ট করুন। 
+একবারে সব না বলে কথোপকথন চালিয়ে যান। অ্যাডমিনের জন্য আপনি একজন দক্ষ ডাটাবেস অপারেটর।"""
 
-অ্যাডমিন কমান্ড গাইড:
-১. যদি অ্যাডমিন কোনো সার্ভিসের নাম এবং টাকা উল্লেখ করে (যেমন: 'X-Ray ৫০০ টাকা'), আপনি সেটি আপডেট করবেন।
-২. যদি কোনো সার্ভিস ডিলিট করতে বলে, আপনি নিশ্চিত করবেন।
-৩. উত্তর সবসময় পেশাদার এবং শুদ্ধ বাংলায় দেবেন।"""
+# ────────────────────────────────────────────────────────────────────────────────
+# SECTION 01: AUTHENTICATION VIEWS (LOGIN, REGISTER, LOGOUT)
+# ────────────────────────────────────────────────────────────────────────────────
 
-# ────────────────────────────────────────────────
-# Home & Public Views
-# ────────────────────────────────────────────────
-def home_view(request):
-    """মূল হোম পেজ রেন্ডার করে"""
-    return render(request, 'core/home.html')
-
-def service_list_view(request):
-    """লগইন ছাড়াই সবাই হাসপাতাল সার্ভিসের তালিকা দেখতে পারবে"""
-    services = HospitalService.objects.all().order_by('service_name')
-    return render(request, 'core/service_list.html', {'services': services})
-
-# ────────────────────────────────────────────────
-# Authentication (Login, Register, Logout)
-# ────────────────────────────────────────────────
 def register_view(request):
+    """নতুন রোগীদের নিবন্ধনের জন্য বিস্তারিত ভিউ"""
     if request.method == "POST":
         full_name = request.POST.get('full_name')
         mobile = request.POST.get('mobile', '').strip()
         
+        if not full_name or not mobile:
+            messages.warning(request, "দয়া করে নাম এবং মোবাইল নম্বর দুটিই প্রদান করুন।")
+            return redirect('register')
+
         if User.objects.filter(username=mobile).exists():
-            messages.error(request, "এই মোবাইল নাম্বারটি ইতিমধ্যে নিবন্ধিত।")
+            messages.error(request, "এই নম্বরটি আগেই নিবন্ধিত হয়েছে।")
             return redirect('register')
         
         user = User.objects.create_user(username=mobile, password=mobile)
         PatientProfile.objects.create(user=user, full_name=full_name, mobile_number=mobile)
-        
-        messages.success(request, "রেজিস্ট্রেশন সফল হয়েছে! দয়া করে লগইন করুন।")
+        messages.success(request, "রেজিস্ট্রেশন সফল! এখন আপনি লগইন করতে পারবেন।")
         return redirect('login')
     return render(request, 'core/register.html')
 
 def login_view(request):
+    """অ্যাডমিন এবং সাধারণ ইউজারদের জন্য পৃথক লগইন গেটওয়ে"""
     if request.method == "POST":
         user_type = request.POST.get('user_type')
         if user_type == 'admin':
@@ -64,8 +55,9 @@ def login_view(request):
                 user = User.objects.filter(is_superuser=True).first()
                 if user:
                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+                    messages.success(request, "অ্যাডমিন প্যানেলে স্বাগতম!")
                     return redirect('ai_agent')
-            messages.error(request, "অ্যাডমিন পাসওয়ার্ড সঠিক নয়!")
+            messages.error(request, "অ্যাডমিন পাসওয়ার্ড ভুল।")
         else:
             mobile = request.POST.get('mobile', '').strip()
             user = User.objects.filter(username=mobile).first()
@@ -73,101 +65,76 @@ def login_view(request):
                 login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                 messages.success(request, f"স্বাগতম {user.username}!")
                 return redirect('home')
-            messages.error(request, "ভুল মোবাইল নাম্বার বা ইউজার পাওয়া যায়নি।")
+            messages.error(request, "ইউজার পাওয়া যায়নি বা নম্বর ভুল।")
     return render(request, 'core/login.html')
 
 def logout_view(request):
     logout(request)
-    messages.info(request, "সফলভাবে লগআউট করা হয়েছে।")
+    messages.info(request, "সফলভাবে লগআউট করা হয়েছে।")
     return redirect('home')
 
-# ────────────────────────────────────────────────
-# Core Features (AI Agent, Doctors, Blood Bank)
-# ────────────────────────────────────────────────
-@login_required
-def ai_agent_page(request):
-    """এআই চ্যাট ইন্টারফেস যেখানে অ্যাডমিন কমান্ড দিতে পারবে"""
-    return render(request, 'core/ai_agent.html')
+# ────────────────────────────────────────────────────────────────────────────────
+# SECTION 02: CORE PAGES & LIST VIEWS
+# ────────────────────────────────────────────────────────────────────────────────
+
+def home_view(request):
+    """মূল হোমপেজ রেন্ডার করা"""
+    return render(request, 'core/home.html')
 
 def doctor_list_view(request):
-    doctors = Doctor.objects.all()
+    """সকল ডাক্তারের তালিকা প্রদর্শনী"""
+    doctors = Doctor.objects.all().order_by('name')
     return render(request, 'core/doctor_list.html', {'doctors': doctors})
 
+def service_list_view(request):
+    """সার্ভিস ও বিলিং তালিকা"""
+    services = HospitalService.objects.all().order_by('service_name')
+    return render(request, 'core/service_list.html', {'services': services})
+
 def blood_bank_view(request):
-    donors = BloodDonor.objects.all()
+    """রক্তদাতাদের তালিকা"""
+    donors = BloodDonor.objects.all().order_by('blood_group')
     return render(request, 'core/blood_bank.html', {'donors': donors})
 
-# ────────────────────────────────────────────────
-# The Brain: AI Agent Logic (Ask AI)
-# ────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────────────────────
+# SECTION 03: AI AGENT INTERFACE & AJAX LOGIC
+# ────────────────────────────────────────────────────────────────────────────────
+
+@login_required
+def ai_agent_page(request):
+    """এআই চ্যাট ইন্টারফেস পেজ"""
+    return render(request, 'core/ai_agent.html')
+
 def ask_ai(request):
-    """এই ফাংশনটি এআই কমান্ড এবং ডাটাবেস অপারেশন হ্যান্ডেল করে"""
-    if request.method != "POST":
-        return JsonResponse({'error': 'Invalid request'}, status=400)
+    """এই ফাংশনটি এআই ইঞ্জিনের সাথে যোগাযোগ স্থাপন করে"""
+    if request.method == "POST":
+        user_message = request.POST.get('message', '').strip()
+        if not user_message:
+            return JsonResponse({'reply': "দয়া করে কিছু টাইপ করুন।"})
 
-    user_message = request.POST.get('message', '').strip()
-    if not user_message:
-        return JsonResponse({'reply': "কিছু লিখুন..."})
-
-    # ১. অ্যাডমিন মোড: ডাটাবেস আপডেট এবং ডিলিট লজিক
-    if request.user.is_superuser:
-        
-        # ডিলিট লজিক: "ডিলিট করো এক্স-রে" বা "এক্স-রে ডিলিট করো"
-        if any(word in user_message for word in ["ডিলিট", "রিমুভ", "বাতিল", "মুছে"]):
-            target_service = re.sub(r'ডিলিট|রিমুভ|বাতিল|মুছে|ফেলো|করো|সার্ভিস|লিস্ট|থেকে', '', user_message).strip()
-            if target_service:
-                # __iexact ব্যবহার করা হয়েছে যাতে ডুপ্লিকেট বা ভুল ডিলিট না হয়
-                deleted_count, _ = HospitalService.objects.filter(service_name__icontains=target_service).delete()
-                if deleted_count > 0:
-                    return JsonResponse({'reply': f"ঠিক আছে অ্যাডমিন, আমি '{target_service}' সংক্রান্ত সকল ডেটাবেস এন্ট্রি মুছে ফেলেছি।"})
-                return JsonResponse({'reply': f"দুঃখিত, '{target_service}' নামে কোনো সার্ভিস খুঁজে পাওয়া যায়নি।"})
-
-        # আপডেট বা অ্যাড লজিক (একই নামে ডুপ্লিকেট রোধ)
-        price_match = re.search(r'(\d+)', user_message)
-        if price_match:
-            new_price = price_match.group(1)
-            service_name_part = re.sub(r'\d+|টাকা|বিল|খরচ|সেট|করো|আপডেট|মূল্য', '', user_message).strip()
-            
-            if service_name_part:
-                # update_or_create ব্যবহার করা হয়েছে যাতে একই নামের ওপরই কাজ হয়
-                obj, created = HospitalService.objects.update_or_create(
-                    service_name__iexact=service_name_part,
-                    defaults={'price': new_price, 'category': 'SERVICE'}
-                )
-                status = "নতুন যোগ" if created else "সফলভাবে আপডেট"
-                return JsonResponse({'reply': f"অ্যাডমিন, '{service_name_part}' সার্ভিসটি {status} করা হয়েছে। বর্তমান মূল্য: {new_price} ৳।"})
-
-    # ২. ডাটাবেস থেকে তথ্য সংগ্রহ (Context for AI)
-    context_data = "বর্তমান সার্ভিসের কিছু নমুনা:\n"
-    services_sample = HospitalService.objects.all()[:5]
-    context_data += "\n".join([f"- {s.service_name}: {s.price}tk" for s in services_sample])
-
-    # ৩. এপিআই কল (OpenRouter)
-    try:
-        api_response = requests.post(
-            "https://openrouter.ai/api/v1/chat/completions",
-            headers={
-                "Authorization": f"Bearer {OPENROUTER_API_KEY}",
-                "Content-Type": "application/json"
-            },
-            json={
-                "model": MODEL_NAME,
-                "messages": [
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": f"Context: {context_data}\nQuestion: {user_message}"}
-                ],
-                "temperature": 0.5
-            },
-            timeout=15
+        # ai_engine.py থেকে প্রসেসিং লজিক কল করা হচ্ছে
+        reply = process_ai_command(
+            request.user, 
+            user_message, 
+            OPENROUTER_API_KEY, 
+            MODEL_NAME, 
+            SYSTEM_PROMPT
         )
-        ai_reply = api_response.json()['choices'][0]['message']['content']
-        return JsonResponse({'reply': ai_reply})
-    except Exception as e:
-        return JsonResponse({'reply': "এআই কানেকশনে সমস্যা হচ্ছে, তবে আপনার কমান্ডটি ডাটাবেসে চেক করুন।"})
+        return JsonResponse({'reply': reply})
+    
+    return JsonResponse({'error': 'Invalid request'}, status=400)
 
-# ────────────────────────────────────────────────
-# Manual Admin Actions
-# ────────────────────────────────────────────────
+# ────────────────────────────────────────────────────────────────────────────────
+# SECTION 04: MANUAL DB CONTROLS (FOR ADMIN BUTTONS)
+# ────────────────────────────────────────────────────────────────────────────────
+
 @user_passes_test(lambda u: u.is_superuser)
-def manual_service_edit(request):
-    return redirect('/admin/core/hospitalservice/')
+def manual_update_redirect(request, model_name):
+    """সাইডবার বাটন থেকে সরাসরি ডাটাবেস এডিট করার লিংক"""
+    if model_name == 'service':
+        return redirect('/admin/core/hospitalservice/')
+    elif model_name == 'doctor':
+        return redirect('/admin/core/doctor/')
+    elif model_name == 'donor':
+        return redirect('/admin/core/blooddonor/')
+    return redirect('ai_agent')

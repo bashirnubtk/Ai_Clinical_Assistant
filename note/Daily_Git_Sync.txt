@@ -1,6 +1,10 @@
 # এনভায়রনমেন্ট অ্যাক্টিভেট না থাকলে করে নিন
 .\venv\Scripts\activate
 
+ডাটাবেস চেক (যদি প্রয়োজন হয়)
+python manage.py makemigrations
+python manage.py migrate
+
 # গিটহাব থেকে লেটেস্ট আপডেট নামানো
 git pull origin main
 

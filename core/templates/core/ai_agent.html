@@ -2,7 +2,6 @@
 
 {% block content %}
 <div class="max-w-6xl mx-auto flex flex-col md:flex-row gap-6 p-4 mt-4">
-    
     <div class="md:w-1/4">
         <div class="bg-white p-6 rounded-2xl border border-gray-100 sticky top-24 shadow-xl text-center">
             <div class="w-20 h-20 {% if user.is_superuser %}bg-purple-600{% else %}bg-blue-600{% endif %} text-white rounded-full flex items-center justify-center text-3xl font-bold mx-auto mb-4 border-4 border-gray-50 shadow-inner">
@@ -17,15 +16,15 @@
 
             {% if user.is_superuser %}
             <div class="mt-6 space-y-2">
-                <a href="/admin/core/doctor/add/" target="_blank" class="block w-full py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold transition">
+                <a href="/admin/core/doctor/add/" target="_blank" class="block w-full py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg text-xs font-bold transition no-underline">
                     + নতুন ডাক্তার যুক্ত করুন
                 </a>
-                <a href="/admin/core/blooddonor/add/" target="_blank" class="block w-full py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-bold transition">
+                <a href="/admin/core/blooddonor/add/" target="_blank" class="block w-full py-2 bg-red-500 hover:bg-red-600 text-white rounded-lg text-xs font-bold transition no-underline">
                     + নতুন রক্তদাতা যুক্ত করুন
                 </a>
-                <button onclick="document.getElementById('user-input').value='ডায়ালাইসিস বিল ৫০০০ টাকা করো'" class="block w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition">
-                    ⚖️ সার্ভিস খরচ আপডেট (AI)
-                </button>
+                <a href="/admin/core/hospitalservice/" target="_blank" class="block w-full py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition no-underline">
+                    ⚖️ সার্ভিস খরচ আপডেট (Manual)
+                </a>
             </div>
             {% endif %}
             
@@ -34,7 +33,7 @@
                     <span class="p-1 bg-green-100 rounded">✅</span> AI Connection Active
                 </div>
                 <div class="flex items-center gap-2 text-sm text-gray-600">
-                    <span class="p-1 bg-blue-100 rounded">🤖</span> Llama 3.1 (OpenRouter)
+                    <span class="p-1 bg-blue-100 rounded">🤖</span> Llama 3.1 (Smart Mode)
                 </div>
             </div>
         </div>
@@ -55,7 +54,7 @@
         <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-50 flex flex-col">
             <div class="flex justify-start">
                 <div class="bg-white border border-gray-200 text-gray-800 p-4 rounded-2xl rounded-tl-none shadow-sm max-w-[80%]">
-                    হ্যালো! আমি কেয়ারনেক্সাস এআই। আপনি কি জানতে চান? আমি আপনাকে হাসপাতালের ডাক্তার, রক্তদাতা বা সাধারণ তথ্য দিয়ে সাহায্য করতে পারি।
+                    কেয়ারনেক্সাস এআই-এর পক্ষ থেকে আপনাকে স্বাগতম! আমি আপনাকে হাসপাতালের ডাক্তার, রক্তদাতা বা সার্ভিস খরচ সংক্রান্ত তথ্য দিয়ে সাহায্য করতে পারি।
                 </div>
             </div>
         </div>
@@ -66,7 +65,7 @@
                 <input type="text" id="user-input" placeholder="আপনার প্রশ্নটি এখানে লিখুন..." 
                     class="flex-1 p-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-inner bg-gray-50"
                     autocomplete="off">
-                <button type="submit" id="send-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold transition-all transform active:scale-95 shadow-lg flex items-center justify-center min-w-[120px]">
+                <button type="submit" id="send-btn" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold transition-all transform active:scale-95 shadow-lg">
                     Send
                 </button>
             </form>
@@ -101,7 +100,7 @@
         appendMessage('user', message);
         userInput.value = '';
         sendBtn.disabled = true;
-        sendBtn.innerText = "Wait...";
+        sendBtn.innerText = "Processing...";
 
         try {
             const response = await fetch("{% url 'ask_ai' %}", {

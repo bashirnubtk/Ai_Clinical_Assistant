@@ -16,10 +16,12 @@ urlpatterns = [
     path('ai-agent/', views.ai_agent_page, name='ai_agent'),
     path('ask-ai/', views.ask_ai, name='ask_ai'),
     
-    # নতুন সার্ভিস ও বিলিং পেজ (এই লাইনটি এরর সমাধান করবে)
+    # সার্ভিস, বিলিং, ডাক্তার ও ব্লাড ব্যাংক
     path('services/', views.service_list_view, name='service_list'),
-    
-    # ডাক্তার ও ব্লাড ব্যাংক
     path('doctors/', views.doctor_list_view, name='doctor_list'),
     path('blood-bank/', views.blood_bank_view, name='blood_bank'),
+
+    # ম্যানুয়াল ডাটাবেস কন্ট্রোল (অ্যাডমিন বাটনগুলোর জন্য)
+    # এটি সাইডবারের 'সার্ভিস খরচ আপডেট (Manual)' বাটনকে কাজ করতে সাহায্য করবে
+    path('manual-update/<str:model_name>/', views.manual_update_redirect, name='manual_update'),
 ]

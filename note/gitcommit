@@ -19,5 +19,11 @@ git commit -m "Added manual admin control gateway alongside AI-powered operation
 git push origin dev
 
 
+git add .
+git commit -m "feat: enhance AI logic with duplicate prevention and direct database deletion"
+git push origin dev
 
+git add .
+git commit -m "Refactor: Integrated Advanced AI Engine with DB Sync & Modular File Structure"
+git push origin dev
 
