@@ -8,7 +8,7 @@ git push origin dev
 
 git add .
 git commit -m "Enhanced navbar design  login-signup buttons and home grid"
-git push origin main
+git push origin dev
 
 git add .
 git commit -m "Added service billing page and updated navigation bar design"
