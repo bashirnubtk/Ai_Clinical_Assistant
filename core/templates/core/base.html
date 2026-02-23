@@ -21,6 +21,7 @@
             <div class="flex items-center gap-6">
                 <a href="{% url 'home' %}" class="hover:text-blue-200 transition font-medium">হোম</a>
                 <a href="{% url 'ai_agent' %}" class="hover:text-blue-200 transition font-medium">AI এজেন্ট</a>
+                <a href="{% url 'service_list' %}" class="hover:text-blue-200 transition font-bold bg-white/10 px-3 py-1 rounded-lg">সার্ভিস ও বিলিং</a>
 
                 <div class="flex items-center gap-4">
                     {% if user.is_authenticated %}

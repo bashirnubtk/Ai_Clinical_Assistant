@@ -7,27 +7,42 @@
         <p class="text-lg text-gray-600">আপনার প্রয়োজনীয় সেবাটি নির্বাচন করুন</p>
     </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         
-        <a href="{% url 'ai_agent' %}" class="group relative bg-white p-12 rounded-3xl shadow-2xl border-2 border-transparent hover:border-blue-500 transition-all duration-300 text-center">
-            <div class="text-6xl mb-6 group-hover:scale-110 transition-transform">🤖</div>
-            <h3 class="text-3xl font-bold text-gray-800 mb-4">AI Agent</h3>
-            <p class="text-gray-500">সরাসরি সাহায্য নিন (উন্মুক্ত)</p>
-            <div class="mt-6 inline-block bg-blue-600 text-white px-6 py-2 rounded-full font-bold">এখনি কথা বলুন →</div>
+        <a href="{% url 'ai_agent' %}" class="group relative bg-white p-8 rounded-3xl shadow-2xl border-2 border-transparent hover:border-blue-500 transition-all duration-300 text-center flex flex-col justify-between">
+            <div>
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🤖</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">AI Agent</h3>
+                <p class="text-gray-500 text-sm">সরাসরি সাহায্য নিন (উন্মুক্ত)</p>
+            </div>
+            <div class="mt-6 inline-block bg-blue-600 text-white px-6 py-2 rounded-full font-bold text-sm">এখনি কথা বলুন →</div>
         </a>
 
-        <a href="{% if user.is_authenticated %}{% url 'doctor_list' %}{% else %}{% url 'login' %}{% endif %}" class="group relative bg-white p-12 rounded-3xl shadow-2xl border-2 border-transparent hover:border-green-500 transition-all duration-300 text-center">
-            <div class="text-6xl mb-6 group-hover:scale-110 transition-transform">👨‍⚕️</div>
-            <h3 class="text-3xl font-bold text-gray-800 mb-4">Expert Doctor</h3>
-            <p class="text-gray-500">সিরিয়াল নিতে লগইন করুন</p>
-            <div class="mt-6 inline-block bg-green-600 text-white px-6 py-2 rounded-full font-bold">তালিকা দেখুন →</div>
+        <a href="{% if user.is_authenticated %}{% url 'doctor_list' %}{% else %}{% url 'login' %}{% endif %}" class="group relative bg-white p-8 rounded-3xl shadow-2xl border-2 border-transparent hover:border-green-500 transition-all duration-300 text-center flex flex-col justify-between">
+            <div>
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">👨‍⚕️</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Expert Doctor</h3>
+                <p class="text-gray-500 text-sm">সিরিয়াল নিতে লগইন করুন</p>
+            </div>
+            <div class="mt-6 inline-block bg-green-600 text-white px-6 py-2 rounded-full font-bold text-sm">তালিকা দেখুন →</div>
         </a>
 
-        <a href="{% if user.is_authenticated %}{% url 'blood_bank' %}{% else %}{% url 'login' %}{% endif %}" class="group relative bg-white p-12 rounded-3xl shadow-2xl border-2 border-transparent hover:border-red-500 transition-all duration-300 text-center">
-            <div class="text-6xl mb-6 group-hover:scale-110 transition-transform">🩸</div>
-            <h3 class="text-3xl font-bold text-gray-800 mb-4">Blood Bank</h3>
-            <p class="text-gray-500">রক্তদাতার তথ্যের জন্য লগইন</p>
-            <div class="mt-6 inline-block bg-red-600 text-white px-6 py-2 rounded-full font-bold">রক্ত খুঁজুন →</div>
+        <a href="{% if user.is_authenticated %}{% url 'blood_bank' %}{% else %}{% url 'login' %}{% endif %}" class="group relative bg-white p-8 rounded-3xl shadow-2xl border-2 border-transparent hover:border-red-500 transition-all duration-300 text-center flex flex-col justify-between">
+            <div>
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🩸</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Blood Bank</h3>
+                <p class="text-gray-500 text-sm">রক্তদাতার তথ্যের জন্য লগইন</p>
+            </div>
+            <div class="mt-6 inline-block bg-red-600 text-white px-6 py-2 rounded-full font-bold text-sm">রক্ত খুঁজুন →</div>
+        </a>
+
+        <a href="{% url 'service_list' %}" class="group relative bg-white p-8 rounded-3xl shadow-2xl border-2 border-transparent hover:border-purple-500 transition-all duration-300 text-center flex flex-col justify-between">
+            <div>
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">📊</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">Services</h3>
+                <p class="text-gray-500 text-sm">ডায়ালাইসিস ও টেস্টের খরচ দেখুন</p>
+            </div>
+            <div class="mt-6 inline-block bg-purple-600 text-white px-6 py-2 rounded-full font-bold text-sm">খরচ দেখুন →</div>
         </a>
 
     </div>

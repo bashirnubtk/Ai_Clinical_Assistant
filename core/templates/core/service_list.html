@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-6xl mx-auto py-12 px-4">
+    <div class="text-center mb-10">
+        <h2 class="text-4xl font-black text-gray-800">হাসপাতাল <span class="text-blue-600">সার্ভিস ও চার্জ শিট</span></h2>
+        <p class="text-gray-500 mt-2">লগইন ছাড়াই সকল টেস্ট ও ডায়ালাইসিসের খরচ দেখুন</p>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200">
+        <table class="w-full text-left">
+            <thead class="bg-gray-800 text-white uppercase text-xs tracking-wider">
+                <tr>
+                    <th class="p-5">সার্ভিসের নাম</th>
+                    <th class="p-5">ক্যাটাগরি</th>
+                    <th class="p-5">মূল খরচ (৳)</th>
+                    <th class="p-5">ডিসকাউন্ট মূল্য</th>
+                    <th class="p-5">শেষ আপডেট</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-100">
+                {% for service in services %}
+                <tr class="hover:bg-blue-50 transition">
+                    <td class="p-5 font-bold text-gray-800">{{ service.service_name }}</td>
+                    <td class="p-5"><span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-[10px] font-bold uppercase">{{ service.category }}</span></td>
+                    <td class="p-5 font-black text-gray-900">{{ service.price }} ৳</td>
+                    <td class="p-5 text-green-600 font-bold">{{ service.discount_price }} ৳</td>
+                    <td class="p-5 text-gray-400 text-xs">{{ service.last_updated|date:"d M, Y" }}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="5" class="p-10 text-center text-gray-400">বর্তমানে কোনো তালিকা নেই। এআইকে অ্যাড করতে বলুন।</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

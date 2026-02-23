@@ -1,0 +1,17 @@
+git add .
+git commit -m "feat: setup UI templates and integrate AI testing via OpenRouter API"
+git push origin dev
+
+git add .
+git commit -m "Integrated AI logic to dynamically update and delete hospital services via chat"
+git push origin dev
+
+git add .
+git commit -m "Added service billing page and updated navigation bar design"
+git push origin dev
+
+
+
+
+
+
