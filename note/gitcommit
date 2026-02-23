@@ -7,6 +7,10 @@ git commit -m "Integrated AI logic to dynamically update and delete hospital ser
 git push origin dev
 
 git add .
+git commit -m "Enhanced navbar design  login-signup buttons and home grid"
+git push origin main
+
+git add .
 git commit -m "Added service billing page and updated navigation bar design"
 git push origin dev
 

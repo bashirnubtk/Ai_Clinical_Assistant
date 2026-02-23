@@ -18,25 +18,29 @@
                 <span class="text-3xl">🏥</span> CareNexus AI
             </a>
 
-            <div class="flex items-center gap-6">
-                <a href="{% url 'home' %}" class="hover:text-blue-200 transition font-medium">হোম</a>
-                <a href="{% url 'ai_agent' %}" class="hover:text-blue-200 transition font-medium">AI এজেন্ট</a>
-                <a href="{% url 'service_list' %}" class="hover:text-blue-200 transition font-bold bg-white/10 px-3 py-1 rounded-lg">সার্ভিস ও বিলিং</a>
+            <div class="flex items-center gap-8">
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="{% url 'home' %}" class="hover:text-blue-200 transition font-medium">হোম</a>
+                    <a href="{% url 'ai_agent' %}" class="hover:text-blue-200 transition font-medium">AI এজেন্ট</a>
+                    <a href="{% url 'service_list' %}" class="hover:text-blue-200 transition font-medium">সার্ভিস ও বিলিং</a>
+                </div>
 
-                <div class="flex items-center gap-4">
+                <div class="flex items-center gap-4 border-l border-white/20 pl-6">
                     {% if user.is_authenticated %}
                         <div class="flex items-center bg-white/20 px-4 py-2 rounded-full gap-2 border border-white/30 shadow-sm">
                             <div class="w-8 h-8 bg-white text-blue-600 rounded-full flex items-center justify-center font-black">
                                 {% if user.is_superuser %} A {% else %} U {% endif %}
                             </div>
-                            <span class="text-white font-bold">
+                            <span class="text-white font-bold text-sm">
                                 {% if user.is_superuser %} Hospital Admin {% else %} {{ user.username }} {% endif %}
                             </span>
                         </div>
-                        <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-xl font-bold transition shadow-lg">লগআউট</a>
+                        <a href="{% url 'logout' %}" class="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-xl font-bold transition shadow-lg text-sm">লগআউট</a>
                     {% else %}
-                        <a href="{% url 'login' %}" class="text-white font-bold hover:underline">লগইন</a>
-                        <a href="{% url 'register' %}" class="bg-white text-blue-600 px-6 py-2 rounded-xl font-bold shadow-md hover:bg-gray-100 transition">সাইন-আপ</a>
+                        <a href="{% url 'login' %}" class="text-white font-bold hover:underline transition">লগইন</a>
+                        <a href="{% url 'register' %}" class="bg-white text-blue-600 px-6 py-2 rounded-xl font-bold shadow-md hover:bg-gray-100 transition transform active:scale-95">
+                            সাইন-আপ
+                        </a>
                     {% endif %}
                 </div>
             </div>
