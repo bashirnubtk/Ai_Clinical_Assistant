@@ -11,6 +11,8 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
+# প্রজেক্টের সেটিংস মডিউল সেট করা হচ্ছে
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'CareNexus.settings')
 
+# সার্ভার অ্যাপ্লিকেশন ভেরিয়েবল
 application = get_wsgi_application()
