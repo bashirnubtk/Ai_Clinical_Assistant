@@ -30,3 +30,7 @@ git push origin dev
 git add .
 git commit -m "Fix: Resolved empty service name display and enhanced template robustness"
 git push origin dev
+
+git add .
+git commit -m "Feature: Integrated Prescription & Appointment models with AI Vision support"
+git push origin dev

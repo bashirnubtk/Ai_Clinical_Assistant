@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<div class="max-w-7xl mx-auto py-10">
+    <h2 class="text-3xl font-bold mb-6">রোগীদের তালিকা ও অ্যাপয়েন্টমেন্ট</h2>
+    <div class="bg-white shadow-xl rounded-2xl overflow-hidden">
+        <table class="w-full">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="p-4">রোগীর নাম</th>
+                    <th class="p-4">সমস্যা</th>
+                    <th class="p-4">স্ট্যাটাস</th>
+                    <th class="p-4">অ্যাকশন</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for appointment in appointments %}
+                <tr class="border-b">
+                    <td class="p-4 font-bold">{{ appointment.patient.username }}</td>
+                    <td class="p-4 text-gray-600">{{ appointment.problem_description|truncatechars:50 }}</td>
+                    <td class="p-4"><span class="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full">{{ appointment.status }}</span></td>
+                    <td class="p-4">
+                        <a href="{% url 'create_prescription' appointment.id %}" class="bg-blue-600 text-white px-4 py-2 rounded-lg">প্রেসক্রিপশন দিন</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
