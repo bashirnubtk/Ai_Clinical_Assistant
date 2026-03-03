@@ -1,0 +1,40 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-6xl mx-auto py-10 px-4">
+    <div class="flex justify-between items-center mb-8">
+        <h2 class="text-3xl font-black text-gray-800 flex items-center gap-3">
+            <span>📂</span> আমার প্রেসক্রিপশন সমূহ
+        </h2>
+    </div>
+
+    {% if prescriptions %}
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {% for p in prescriptions %}
+        <div class="bg-white rounded-3xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-2xl transition-all">
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-4">
+                    <span class="bg-blue-100 text-blue-700 text-xs font-bold px-3 py-1 rounded-full uppercase">
+                        তারিখ: {{ p.created_at|date:"d M, Y" }}
+                    </span>
+                    <span class="text-gray-400 text-xs">ID: #{{ p.id }}</span>
+                </div>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">💊 ঔষধের তালিকা:</h3>
+                <p class="text-gray-600 mb-4">{{ p.medicines|linebreaks|truncatechars:100 }}</p>
+                
+                <div class="flex gap-3">
+                    <a href="{% url 'prescription_detail_ai' p.id %}" class="flex-1 bg-indigo-600 text-white text-center py-3 rounded-xl font-bold hover:bg-indigo-700">
+                        AI বিশ্লেষণ
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="bg-blue-50 text-center p-20 rounded-3xl border-2 border-dashed border-blue-200">
+        <p class="text-blue-500 font-bold text-xl">এখনো কোনো প্রেসক্রিপশন তৈরি হয়নি।</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

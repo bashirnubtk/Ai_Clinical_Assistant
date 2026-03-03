@@ -1,0 +1,55 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-10 px-4">
+    <div class="bg-white rounded-3xl shadow-2xl border border-gray-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-700 to-indigo-800 p-8 text-white">
+            <div class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-black">নতুন প্রেসক্রিপশন প্রদান</h2>
+                    <p class="opacity-80 mt-1">রোগী: {{ appointment.patient.username }} | আইডি: #{{ appointment.id }}</p>
+                </div>
+                <div class="text-5xl">✍️</div>
+            </div>
+        </div>
+
+        <div class="p-8">
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-8 rounded-r-xl">
+                <h4 class="font-bold text-blue-900 text-sm uppercase mb-1">রোগীর বর্ণনা:</h4>
+                <p class="text-gray-700 italic">"{{ appointment.problem_description }}"</p>
+            </div>
+
+            <form method="POST" class="space-y-6">
+                {% csrf_token %}
+                
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2 flex items-center gap-2">
+                        <span>💊</span> ঔষধের নাম ও সেবনের নিয়ম:
+                    </label>
+                    <textarea name="medicines" rows="6" required
+                        class="w-full border-2 border-gray-100 rounded-2xl p-4 focus:border-blue-500 focus:ring-0 transition-all outline-none bg-gray-50"
+                        placeholder="১. নাপা এক্সট্রা (১+০+১) - খাবারের পর&#10;২. সেকলো ২০মিগ্রা (১+০+১) - খাবারের আগে"></textarea>
+                </div>
+
+                <div>
+                    <label class="block text-gray-700 font-bold mb-2 flex items-center gap-2">
+                        <span>📝</span> বিশেষ পরামর্শ/উপদেশ:
+                    </label>
+                    <textarea name="advice" rows="4" required
+                        class="w-full border-2 border-gray-100 rounded-2xl p-4 focus:border-blue-500 focus:ring-0 transition-all outline-none bg-gray-50"
+                        placeholder="পর্যাপ্ত বিশ্রাম নিন এবং প্রচুর পানি পান করুন।"></textarea>
+                </div>
+
+                <div class="flex gap-4 pt-4">
+                    <button type="submit" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-black py-4 rounded-2xl shadow-lg transform active:scale-95 transition-all">
+                        প্রেসক্রিপশন নিশ্চিত করুন (SUBMIT)
+                    </button>
+                    <a href="{% url 'admin_patient_list' %}" class="px-8 bg-gray-100 hover:bg-gray-200 text-gray-600 font-bold py-4 rounded-2xl transition-all text-center">
+                        বাতিল
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

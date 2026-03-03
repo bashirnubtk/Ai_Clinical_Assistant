@@ -1,0 +1,93 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto py-10 px-4">
+    <div class="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 min-h-[600px] flex flex-col">
+        
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="relative">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" class="w-12 h-12 bg-white rounded-full p-1 shadow-md">
+                    <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></span>
+                </div>
+                <div>
+                    <h3 class="font-black text-xl leading-tight">কেয়ারনেক্সাস স্মার্ট এজেন্ট</h3>
+                    <p class="text-xs opacity-80">অনলাইনে আছে • হিস্ট্রি সেভ হচ্ছে</p>
+                </div>
+            </div>
+            <a href="{% url 'analyze_prescription' %}" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-xl text-sm transition-all font-bold">নতুন সেশন</a>
+        </div>
+
+        <div class="flex-1 p-6 space-y-6 overflow-y-auto bg-gray-50/50" id="chat-container">
+            
+            {% if full_history %}
+                {% for chat in full_history %}
+                    <div class="flex justify-end">
+                        <div class="bg-blue-600 text-white p-4 rounded-2xl rounded-tr-none shadow-md max-w-[80%]">
+                            <p class="text-xs opacity-75 mb-1">আপনি</p>
+                            <p class="text-sm italic">"{{ chat.user }}"</p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-start gap-3">
+                        <img src="https://cdn-icons-png.flaticon.com/512/4712/4712035.png" class="w-8 h-8 opacity-50 mt-1">
+                        <div class="bg-white border border-gray-100 p-5 rounded-2xl rounded-tl-none shadow-sm text-gray-800 max-w-[90%]">
+                            <div class="prose prose-sm max-w-none">
+                                {{ chat.ai|linebreaks }}
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="flex justify-end">
+                    <div class="bg-blue-600 text-white p-4 rounded-2xl rounded-tr-none shadow-md max-w-[80%]">
+                        <p class="mt-1 opacity-90">"{{ user_message }}"</p>
+                    </div>
+                </div>
+                <div class="flex items-start gap-3">
+                    <div class="bg-white border border-gray-100 p-6 rounded-2xl rounded-tl-none shadow-lg text-gray-800 max-w-[90%]">
+                        {{ reply|linebreaks }}
+                    </div>
+                </div>
+            {% endif %}
+
+            <div id="scroll-to"></div>
+        </div>
+
+        <div class="p-6 bg-white border-t border-gray-100">
+            <form method="POST" action="{% url 'analyze_prescription' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="relative group">
+                    <textarea name="patient_history" rows="2" required
+                        class="w-full p-4 pr-32 border-2 border-gray-100 rounded-2xl focus:border-blue-500 focus:ring-4 focus:ring-blue-500/10 outline-none resize-none transition-all shadow-sm" 
+                        placeholder="ঔষধের নাম বা শারীরিক সমস্যা নিয়ে আরও কিছু জানতে চান?"></textarea>
+                    
+                    <div class="absolute right-2 top-2 flex gap-2">
+                        <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-blue-700 hover:shadow-lg transition-all flex items-center gap-2">
+                            পাঠান <span>➔</span>
+                        </button>
+                    </div>
+                </div>
+                <p class="text-[10px] text-gray-400 mt-3 text-center uppercase tracking-widest font-bold">
+                    ⚠️ এটি একটি এআই পরামর্শ। জরুরি প্রয়োজনে সরাসরি চিকিৎসকের পরামর্শ নিন।
+                </p>
+            </form>
+        </div>
+
+        <div class="p-3 bg-gray-50 text-center border-t border-gray-100">
+            <button onclick="window.print()" class="text-blue-600 font-bold text-xs hover:underline flex items-center justify-center gap-2 mx-auto">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                </svg>
+                রিপোর্টটি প্রিন্ট করুন
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // অটোমেটিক চ্যাটের নিচে স্ক্রল করার জন্য
+    const container = document.getElementById('chat-container');
+    container.scrollTop = container.scrollHeight;
+</script>
+{% endblock %}

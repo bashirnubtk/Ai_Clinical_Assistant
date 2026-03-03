@@ -1,0 +1,61 @@
+{% extends 'core/base.html' %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-12">
+    <div class="text-center mb-12">
+        <div class="inline-block p-4 bg-blue-100 rounded-full mb-4 animate-pulse">
+            <span class="text-5xl">🦾</span>
+        </div>
+        <h1 class="text-4xl font-black text-blue-900">AI Robot Assistant</h1>
+        <p class="text-gray-600 mt-2">প্রেসক্রিপশন আপলোড করুন অথবা আপনার শারীরিক সমস্যার কথা লিখুন।</p>
+    </div>
+
+    <div class="bg-white rounded-3xl shadow-2xl border-2 border-dashed border-blue-200 p-8 md:p-12">
+        <form method="POST" enctype="multipart/form-data" class="space-y-6">
+            {% csrf_token %}
+            
+            <div class="flex flex-col items-center justify-center border-4 border-blue-50 bg-blue-50/30 rounded-2xl p-10 hover:bg-blue-50 transition-all cursor-pointer relative">
+                <input type="file" name="prescription_image" accept="image/*" 
+                       class="absolute inset-0 opacity-0 cursor-pointer" onchange="previewImage(this)">
+                
+                <div id="upload-placeholder" class="text-center">
+                    <div class="text-6xl mb-4 text-blue-400">📸</div>
+                    <p class="text-lg font-bold text-blue-800">প্রেসক্রিপশনের ছবি দিতে চাইলে এখানে ক্লিক করুন</p>
+                    <p class="text-sm text-blue-500">(ঐচ্ছিক - ছবি ছাড়াও আপনি নিচে লিখতে পারেন)</p>
+                </div>
+                <img id="image-preview" class="hidden max-h-64 rounded-lg shadow-md border-2 border-white">
+            </div>
+
+            <div class="bg-blue-900 rounded-2xl p-6 text-white">
+                <h3 class="font-bold flex items-center gap-2 mb-2">
+                    <span class="text-xl">📜</span> আপনার সমস্যার বিবরণ দিন:
+                </h3>
+                <textarea name="patient_history" rows="4" required
+                    class="w-full bg-blue-800/50 border border-blue-400 rounded-xl p-4 text-white placeholder-blue-300 focus:outline-none focus:ring-2 focus:ring-blue-300"
+                    placeholder="যেমন: আমার গত ২ দিন ধরে প্রচুর জ্বর এবং সাথে শুকনো কাশি হচ্ছে..."></textarea>
+            </div>
+
+            <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white py-5 rounded-2xl font-black text-xl shadow-xl transition-all transform active:scale-95 flex items-center justify-center gap-3">
+                <span>START AI ANALYSIS</span>
+                <span class="text-2xl">🚀</span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function previewImage(input) {
+        const preview = document.getElementById('image-preview');
+        const placeholder = document.getElementById('upload-placeholder');
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+</script>
+{% endblock %}

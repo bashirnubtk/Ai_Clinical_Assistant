@@ -38,3 +38,12 @@ git push origin dev
 git add .
 git commit -m "Major: Finalized AI-Powered Hospital Ecosystem with Prescription Analysis and Admin-Patient Automation"
 git push origin dev
+
+git add .
+git commit -m "UI Update: Added Booking forms and Prescription links to templates"
+git push origin dev
+
+
+git add .
+git commit -m "CareNexus AI Engine and Views updated with full database connectivity"
+git push origin dev

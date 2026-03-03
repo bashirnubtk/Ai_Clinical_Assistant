@@ -9,45 +9,50 @@
             </div>
             <h3 class="font-bold text-gray-800 text-xl">স্বাগতম, {{ user.username }}</h3>
             <p class="text-sm text-gray-500 mt-2">আপনার সঠিক চিকিৎসা নিশ্চিত করাই আমাদের লক্ষ্য।</p>
-            <div class="mt-4 pt-4 border-t border-blue-100">
-                <span class="text-xs font-bold text-blue-600 uppercase">Logged in as Patient</span>
-            </div>
         </div>
     </div>
 
     <div class="md:w-3/4 bg-white p-8 rounded-2xl shadow-xl border border-gray-100">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-3xl font-black text-blue-900 flex items-center gap-3">
-                <span class="bg-blue-100 p-2 rounded-lg">👨‍⚕️</span> Expert Doctors List
-            </h2>
-            <span class="bg-blue-100 text-blue-700 px-4 py-1 rounded-full text-sm font-bold">Total: {{ doctors|length }}</span>
-        </div>
+        <h2 class="text-3xl font-black text-blue-900 mb-6 flex items-center gap-3">
+            <span class="bg-blue-100 p-2 rounded-lg">👨‍⚕️</span> বিশেষজ্ঞ ডাক্তারগণ
+        </h2>
 
         <div class="overflow-x-auto">
-            <table class="w-full text-left">
+            <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="bg-blue-600 text-white">
-                        <th class="p-4 rounded-tl-xl">Doctor Name</th>
-                        <th class="p-4">Specialty</th>
-                        <th class="p-4 rounded-tr-xl">Schedule</th>
+                        <th class="p-4 rounded-tl-xl">ডাক্তার তথ্য</th>
+                        <th class="p-4">শিডিউল</th>
+                        <th class="p-4 rounded-tr-xl text-center">বুকিং এবং সমস্যা বর্ণনা</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     {% for doctor in doctors %}
                     <tr class="hover:bg-blue-50 transition-colors">
-                        <td class="p-4 font-bold text-gray-800">{{ doctor.name }}</td>
-                        <td class="p-4 text-blue-600 font-semibold">{{ doctor.specialty }}</td>
                         <td class="p-4">
-                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-medium">
+                            <div class="font-bold text-gray-800">{{ doctor.name }}</div>
+                            <div class="text-blue-600 text-sm font-semibold">{{ doctor.specialty }}</div>
+                        </td>
+                        <td class="p-4">
+                            <span class="bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold block text-center italic">
                                 {{ doctor.schedule }}
                             </span>
+                        </td>
+                        <td class="p-4">
+                            <form method="POST" action="{% url 'book_appointment' doctor.id %}" class="flex flex-col gap-2">
+                                {% csrf_token %}
+                                <textarea name="problem_description" 
+                                    class="w-full border border-gray-200 rounded-lg p-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none transition-all" 
+                                    rows="2" placeholder="আপনার শারীরিক সমস্যাটি এখানে সংক্ষেপে লিখুন..." required></textarea>
+                                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-lg text-xs font-black shadow-lg transition-transform active:scale-95">
+                                    CONFIRM BOOKING
+                                </button>
+                            </form>
                         </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="3" class="p-10 text-center text-gray-400 font-medium">
-                            বর্তমানে কোনো ডাক্তার তালিকায় নেই।
-                        </td>
+                        <td colspan="3" class="p-10 text-center text-gray-400 font-medium">বর্তমানে কোনো ডাক্তার তালিকাভুক্ত নেই।</td>
                     </tr>
                     {% endfor %}
                 </tbody>
