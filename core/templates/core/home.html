@@ -22,7 +22,7 @@
             <div>
                 <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">🦾</div>
                 <h3 class="text-2xl font-bold text-indigo-900 mb-4">স্মার্ট প্রেসক্রিপশন রিডার</h3>
-                <p class="text-indigo-700 text-sm">আপনার স্বাস্থ্য বিষয়ক ডিজিটাল রোবট সহকারী</p>
+                <p class="text-indigo-700 text-sm">আপনার স্বাস্থ্য বিষয়ক ডিজিটাল রোবট সহকারী</p>
             </div>
             <div class="mt-6 inline-block bg-indigo-600 text-white px-6 py-2 rounded-full font-bold text-sm">রোবটের সাহায্য নিন →</div>
         </a>
@@ -53,6 +53,22 @@
             </div>
             <div class="mt-6 inline-block bg-purple-600 text-white px-6 py-2 rounded-full font-bold text-sm">খরচ দেখুন →</div>
         </a>
+
+        <div class="group relative bg-white p-8 rounded-3xl shadow-2xl border-2 border-transparent hover:border-yellow-500 transition-all duration-300 text-center flex flex-col justify-between overflow-hidden">
+            <div class="absolute top-0 left-0 bg-yellow-400 text-yellow-900 px-4 py-1 rounded-br-2xl font-black text-xs uppercase tracking-widest shadow-sm">
+                নতুন সেবা
+            </div>
+            
+            <div>
+                <div class="text-5xl mb-6 group-hover:scale-110 transition-transform">💊</div>
+                <h3 class="text-2xl font-bold text-gray-800 mb-4">অনলাইন ফার্মাসি</h3>
+                <p class="text-gray-500 text-sm">হসপিটালে ভর্তি থাকা বা বহিঃবিভাগের সকল রোগী এখন ঘরে বসেই ঔষধ অর্ডার করতে পারবেন।</p>
+            </div>
+            
+            <a href="#" class="mt-6 inline-block bg-yellow-500 hover:bg-yellow-600 text-white px-6 py-2 rounded-full font-bold text-sm transition-colors shadow-md">
+                ঔষধ কিনুন →
+            </a>
+        </div>
 
         {% if user.is_authenticated and not user.is_superuser %}
         <a href="{% url 'view_my_prescriptions' %}" class="group relative bg-blue-50 p-8 rounded-3xl shadow-2xl border-2 border-blue-500 hover:bg-blue-600 transition-all duration-300 text-center flex flex-col justify-between">

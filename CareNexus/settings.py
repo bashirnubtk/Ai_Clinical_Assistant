@@ -1,6 +1,6 @@
 from pathlib import Path
 import os
-from dotenv import load_dotenv  # pip install python-dotenv
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -68,9 +68,19 @@ LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
+
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']
+
+# মিডিয়া ফাইল কনফিগারেশন
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# লগইন রিডাইরেক্ট ইউআরএল
+LOGIN_URL = 'login'
 
 # OpenRouter API key
 OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
 if not OPENROUTER_API_KEY:
-    raise Exception("OPENROUTER_API_KEY not found! Check your .env file.")
+    # ডেভেলপমেন্টের সুবিধার জন্য এখানে এরর না দিয়ে সতর্ক করা যেতে পারে
+    print("WARNING: OPENROUTER_API_KEY not found in .env file!")

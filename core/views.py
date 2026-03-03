@@ -102,15 +102,21 @@ def prescription_detail_ai(request, pk):
     return render(request, 'core/prescription_detail_ai.html', {'prescription': prescription})
 
 # --- AI AGENT ---
-@login_required
 def ask_ai(request):
     if request.method == "POST":
         user_message = request.POST.get('message', '')
+        
+        # যদি ইউজার লগইন করা না থাকে
+        if not request.user.is_authenticated:
+            reply = "কেয়ারনেক্সাস হাসপাতালে আমাদের অসংখ্য বিশেষজ্ঞ ডাক্তার উপস্থিত আছেন। আপনার শারীরিক সমস্যার সমাধান এবং উন্নত এআই সাহায্যের জন্য দয়া করে লগইন অথবা রেজিস্ট্রেশন করুন।"
+            return JsonResponse({'reply': reply})
+        
+        # লগইন করা থাকলে আগের লজিক কাজ করবে
         reply = process_ai_command(request.user, user_message, OPENROUTER_API_KEY, MODEL_NAME, SYSTEM_PROMPT)
         return JsonResponse({'reply': reply})
     return JsonResponse({'error': 'Invalid request'}, status=400)
 
-@login_required
+# @login_required সরিয়ে দেওয়া হলো যাতে সবাই পেজটি দেখতে পারে
 def ai_agent_page(request):
     return render(request, 'core/ai_agent.html')
 
@@ -145,9 +151,7 @@ def analyze_prescription_view(request):
 # --- ADMIN INTERFACE ---
 @user_passes_test(lambda u: u.is_superuser)
 def admin_patient_list(request):
-    # নিবন্ধিত সকল রোগী
     all_patients = PatientProfile.objects.all().order_by('-id')
-    # সকল অ্যাপয়েন্টমেন্ট
     appointments = Appointment.objects.all().order_by('-created_at')
     
     return render(request, 'core/admin_patient_list.html', {
@@ -169,3 +173,9 @@ def create_prescription_view(request, appt_id):
         appointment.save()
         return redirect('admin_patient_list')
     return render(request, 'core/create_prescription.html', {'appointment': appointment})
+
+# --- OTHERS / DEPARTMENTS VIEW ---
+# @login_required সরিয়ে দেওয়া হলো যাতে সবাই বিভাগগুলো দেখতে পারে
+def others_view(request):
+    """হসপিটালের অন্যান্য সকল ডিপার্টমেন্ট দেখার জন্য"""
+    return render(request, 'core/others.html')
