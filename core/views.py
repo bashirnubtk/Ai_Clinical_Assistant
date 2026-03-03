@@ -8,18 +8,13 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.files.storage import default_storage
 
-# মডেল এবং এআই ইঞ্জিন ইম্পোর্ট
 from .models import PatientProfile, Doctor, BloodDonor, HospitalService, Appointment, Prescription
 from .ai_engine import process_ai_command
 from .ai_prescription_analyzer import extract_text_and_analyze
 
-# CONFIGURATION
 OPENROUTER_API_KEY = settings.OPENROUTER_API_KEY
 MODEL_NAME = "openrouter/free"
-SYSTEM_PROMPT = """আপনি CareNexus হাসপাতালের একজন অত্যন্ত দক্ষ এবং দয়ালু AI সহকারী। 
-ইউজারদের সাথে মানুষের মতো আন্তরিকভাবে বাংলায় কথা বলুন। 
-ডাটাবেস থেকে তথ্য দেওয়া হলে সেই তথ্য নির্ভুলভাবে জানাবেন। 
-কোনো তথ্য না থাকলে সরাসরি না বলে সৌজন্যের সাথে ফ্রন্ট ডেস্কে যোগাযোগ করতে বলুন।"""
+SYSTEM_PROMPT = "আপনি CareNexus হাসপাতালের একজন অত্যন্ত দক্ষ, দয়ালু এবং সংবেদনশীল AI সহকারী। আপনার কাজ হলো রোগীদের সাহায্য করা এবং সঠিক তথ্য প্রদান করা।"
 
 # --- AUTHENTICATION ---
 def register_view(request):
@@ -76,6 +71,48 @@ def blood_bank_view(request):
     return render(request, 'core/blood_bank.html', {'donors': donors})
 
 @login_required
+def service_list_view(request):
+    services = HospitalService.objects.all()
+    return render(request, 'core/service_list.html', {'services': services})
+
+@login_required
+def book_appointment(request, doctor_id):
+    if request.method == "POST":
+        doctor = get_object_or_404(Doctor, id=doctor_id)
+        Appointment.objects.create(
+            patient=request.user, 
+            doctor=doctor, 
+            problem_description=request.POST.get('problem_description'),
+            status='Pending'
+        )
+        messages.success(request, "অ্যাপয়েন্টমেন্ট বুক করা হয়েছে।")
+        return redirect('home')
+    return redirect('doctor_list')
+
+@login_required
+def view_my_prescriptions(request):
+    prescriptions = Prescription.objects.filter(patient=request.user).order_by('-created_at')
+    return render(request, 'core/my_prescriptions.html', {'prescriptions': prescriptions})
+
+@login_required
+def prescription_detail_ai(request, pk):
+    prescription = get_object_or_404(Prescription, pk=pk, patient=request.user)
+    return render(request, 'core/prescription_detail_ai.html', {'prescription': prescription})
+
+# --- AI AGENT ---
+@login_required
+def ask_ai(request):
+    if request.method == "POST":
+        user_message = request.POST.get('message', '')
+        reply = process_ai_command(request.user, user_message, OPENROUTER_API_KEY, MODEL_NAME, SYSTEM_PROMPT)
+        return JsonResponse({'reply': reply})
+    return JsonResponse({'error': 'Invalid request'}, status=400)
+
+@login_required
+def ai_agent_page(request):
+    return render(request, 'core/ai_agent.html')
+
+@login_required
 def analyze_prescription_view(request):
     if 'chat_history' not in request.session:
         request.session['chat_history'] = []
@@ -91,10 +128,9 @@ def analyze_prescription_view(request):
 
         ai_reply = extract_text_and_analyze(file_full_path, user_msg, request.user)
         
-        # সেভ হিস্ট্রি (সেশন)
         history = request.session['chat_history']
         history.append({'user': user_msg, 'ai': ai_reply})
-        request.session['chat_history'] = history[-5:] # শেষ ৫টি মনে রাখবে
+        request.session['chat_history'] = history[-5:]
         request.session.modified = True
 
         if file_full_path and os.path.exists(file_full_path):
@@ -103,22 +139,6 @@ def analyze_prescription_view(request):
         return render(request, 'core/chat_result.html', {'reply': ai_reply, 'user_message': user_msg})
     
     return render(request, 'core/prescription_upload.html')
-
-@login_required
-def ask_ai(request):
-    """টেক্সট চ্যাটের জন্য প্রধান এপিআই এন্ডপয়েন্ট"""
-    if request.method == "POST":
-        user_message = request.POST.get('message', '')
-        # ai_engine কে কল করা হচ্ছে ডাটাবেস এক্সেসসহ
-        reply = process_ai_command(
-            request.user, 
-            user_message, 
-            OPENROUTER_API_KEY, 
-            MODEL_NAME, 
-            SYSTEM_PROMPT
-        )
-        return JsonResponse({'reply': reply})
-    return JsonResponse({'error': 'Invalid request'}, status=400)
 
 # --- ADMIN INTERFACE ---
 @user_passes_test(lambda u: u.is_superuser)
@@ -140,7 +160,3 @@ def create_prescription_view(request, appt_id):
         appointment.save()
         return redirect('admin_patient_list')
     return render(request, 'core/create_prescription.html', {'appointment': appointment})
-
-@login_required
-def ai_agent_page(request):
-    return render(request, 'core/ai_agent.html')
