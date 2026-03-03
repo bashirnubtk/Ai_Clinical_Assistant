@@ -47,3 +47,11 @@ git push origin dev
 git add .
 git commit -m "CareNexus AI Engine and Views updated with full database connectivity"
 git push origin dev
+
+git add .
+git commit -m "refactor: integrate AI engine with full database context and fix view attribute errors"
+git push origin dev
+
+git add .
+git commit -m "feat: update admin dashboard with patient list and enhance AI engine database retrieval" -m "1. Updated views.py to fetch all registered patients and appointments for the admin.\n2. Enhanced admin_patient_list.html with two separate tables for requests and users.\n3. Improved ai_engine.py to allow the AI to detect and report registered patient statistics."
+git push origin dev

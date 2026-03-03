@@ -5,7 +5,7 @@ from .models import Doctor, BloodDonor, HospitalService, PatientProfile, Prescri
 
 def process_ai_command(user, user_message, api_key, model_name, system_prompt):
     """
-    CareNexus AI Engine: ডাটাবেস থেকে তথ্য নিয়ে সংবেদনশীল ও মানুষের মতো উত্তর তৈরি করে।
+    CareNexus AI Engine: ডাটাবেস থেকে তথ্য নিয়ে সংবেদনশীল ও মানুষের মতো উত্তর তৈরি করে।
     """
     user_message_lower = user_message.lower()
     
@@ -17,7 +17,7 @@ def process_ai_command(user, user_message, api_key, model_name, system_prompt):
             if clean_name:
                 deleted_count, _ = HospitalService.objects.filter(service_name__icontains=clean_name).delete()
                 if deleted_count > 0:
-                    return f"জি অ্যাডমিন, আমি সফলভাবে '{clean_name}' সংক্রান্ত সকল তথ্য ডাটাবেস থেকে মুছে দিয়েছি। আপনার আর কোনো নির্দেশ আছে?"
+                    return f"জি অ্যাডমিন, আমি সফলভাবে '{clean_name}' সংক্রান্ত সকল তথ্য ডাটাবেস থেকে মুছে দিয়েছি। আপনার আর কোনো নির্দেশ আছে?"
 
         # অ্যাড বা আপডেট লজিক (প্রাইস ডিটেকশন)
         price_match = re.search(r'(\d+)', user_message)
@@ -37,13 +37,13 @@ def process_ai_command(user, user_message, api_key, model_name, system_prompt):
                 action = "নতুন যোগ করেছি" if created else "আপডেট করেছি"
                 return f"জি অ্যাডমিন, আমি '{target_service}' সার্ভিসের মূল্য {new_amount} ৳ হিসেবে {action}। এটি এখন ডাটাবেসে সেভ আছে।"
 
-    # --- সেকশন ২: ডাটা রিট্রিভাল (এআই-এর মেমোরিতে ডাটা দেওয়া) ---
+    # --- সেকশন ২: ডাটা রিট্রিভাল (এআই-এর মেমোরিতে ডাটা দেওয়া) ---
     database_info = "--- হাসপাতালের বর্তমান রেকর্ড ---\n"
     
     # ডাক্তার তথ্য
     docs = Doctor.objects.all()
     if docs.exists():
-        database_info += "ডাক্তার ও সময়: " + ", ".join([f"{d.name} ({d.specialty} - {d.schedule})" for d in docs]) + "\n"
+        database_info += "ডাক্তার ও সময়: " + ", ".join([f"{d.name} ({d.specialty} - {d.schedule})" for d in docs]) + "\n"
     
     # রক্তদাতা তথ্য
     donors = BloodDonor.objects.all()
@@ -55,19 +55,27 @@ def process_ai_command(user, user_message, api_key, model_name, system_prompt):
     if services.exists():
         database_info += "টেস্টের মূল্য: " + ", ".join([f"{s.service_name} {s.price}tk" for s in services]) + "\n"
 
+    # নিবন্ধিত রোগীর তথ্য (শুধুমাত্র অ্যাডমিন জিজ্ঞাসা করলে বা রোগী সম্পর্কিত প্রশ্নে)
+    if user.is_superuser and any(word in user_message_lower for word in ["রোগী", "পেশেন্ট", "নতুন", "নিবন্ধিত"]):
+        patients = PatientProfile.objects.all().order_by('-id')
+        if patients.exists():
+            p_list = ", ".join([f"{p.full_name} ({p.mobile_number})" for p in patients[:10]]) # শেষ ১০ জন
+            database_info += f"\n[অ্যাডমিন তথ্য]: বর্তমানে মোট {patients.count()} জন রোগী নিবন্ধিত আছেন। সর্বশেষ কয়েকজন: {p_list}\n"
+        else:
+            database_info += "\n[অ্যাডমিন তথ্য]: বর্তমানে কোনো রোগী নিবন্ধিত নেই।\n"
+
     # --- সেকশন ৩: মানুষের মতো প্রম্পট ডিজাইন ---
-    # এআই-কে নির্দেশ দেওয়া হচ্ছে সে যেন ডাটাবেসের তথ্য ব্যবহার করে কিন্তু যান্ত্রিকভাবে নয়
     enriched_prompt = f"""
-    আপনি কেয়ারনেক্সাস হাসপাতালের একজন স্মার্ট, দয়ালু এবং পেশাদার সহকারী। 
+    আপনি কেয়ারনেক্সাস হাসপাতালের একজন স্মার্ট, দয়ালু এবং পেশাদার সহকারী। 
     
     ইউজারের প্রশ্ন: {user_message}
     
-    হাসপাতালের ডাটাবেস থেকে প্রাপ্ত তথ্য:
+     hospitals database info:
     {database_info}
     
     নির্দেশনা:
-    ১. যদি ইউজার সাধারণ কথা (যেমন: কেমন আছেন, হাই) বলে, তবে অত্যন্ত বিনয়ের সাথে উত্তর দিন।
-    ২. যদি ডাটাবেসের তথ্য নিয়ে প্রশ্ন করে, তবে উপরের তালিকা থেকে সঠিক তথ্যটি খুঁজে সুন্দরভাবে বলুন।
+    ১. যদি ইউজার সাধারণ কথা (যেমন: কেমন আছেন, হাই) বলে, তবে অত্যন্ত বিনয়ের সাথে উত্তর দিন।
+    ২. যদি ডাটাবেসের তথ্য নিয়ে প্রশ্ন করে, তবে উপরের তালিকা থেকে সঠিক তথ্যটি খুঁজে সুন্দরভাবে বলুন।
     ৩. যদি কোনো তথ্য ডাটাবেসে না থাকে, তবে 'বর্তমানে এই তথ্যটি নেই, আমি কি অন্যভাবে সাহায্য করতে পারি?' - এভাবে বলুন।
     ৪. উত্তরের ভাষা হবে সহজ এবং আধুনিক বাংলা।
     """
@@ -89,4 +97,4 @@ def process_ai_command(user, user_message, api_key, model_name, system_prompt):
         response.raise_for_status()
         return response.json()['choices'][0]['message']['content'].strip()
     except Exception as e:
-        return "দুঃখিত, আমি এই মুহূর্তে সার্ভারের সাথে সংযুক্ত হতে পারছি না। দয়া করে কিছুক্ষণ পর চেষ্টা করুন।"
+        return "দুঃখিত, আমি এই মুহূর্তে সার্ভারের সাথে সংযুক্ত হতে পারছি না। দয়া করে কিছুক্ষণ পর চেষ্টা করুন।"

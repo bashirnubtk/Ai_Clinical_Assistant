@@ -8,13 +8,15 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.core.files.storage import default_storage
 
+# মডেল এবং এআই ইঞ্জিন ইম্পোর্ট
 from .models import PatientProfile, Doctor, BloodDonor, HospitalService, Appointment, Prescription
 from .ai_engine import process_ai_command
 from .ai_prescription_analyzer import extract_text_and_analyze
 
+# --- CONFIGURATION ---
 OPENROUTER_API_KEY = settings.OPENROUTER_API_KEY
 MODEL_NAME = "openrouter/free"
-SYSTEM_PROMPT = "আপনি CareNexus হাসপাতালের একজন অত্যন্ত দক্ষ, দয়ালু এবং সংবেদনশীল AI সহকারী। আপনার কাজ হলো রোগীদের সাহায্য করা এবং সঠিক তথ্য প্রদান করা।"
+SYSTEM_PROMPT = "আপনি CareNexus হাসপাতালের একজন অত্যন্ত দক্ষ, দয়ালু এবং সংবেদনশীল AI সহকারী। আপনার কাজ হলো রোগীদের সাহায্য করা এবং সঠিক তথ্য প্রদান করা।"
 
 # --- AUTHENTICATION ---
 def register_view(request):
@@ -29,7 +31,7 @@ def register_view(request):
             return redirect('register')
         user = User.objects.create_user(username=mobile, password=mobile)
         PatientProfile.objects.create(user=user, full_name=full_name, mobile_number=mobile)
-        messages.success(request, "রেজিস্ট্রেশন সফল হয়েছে!")
+        messages.success(request, "রেজিস্ট্রেশন সফল হয়েছে!")
         return redirect('login')
     return render(request, 'core/register.html')
 
@@ -42,7 +44,7 @@ def login_view(request):
                 if user:
                     login(request, user, backend='django.contrib.auth.backends.ModelBackend')
                     return redirect('admin_patient_list')
-            messages.error(request, "ভুল অ্যাডমিন পাসওয়ার্ড!")
+            messages.error(request, "ভুল অ্যাডমিন পাসওয়ার্ড!")
         else:
             mobile = request.POST.get('mobile', '').strip()
             user = User.objects.filter(username=mobile).first()
@@ -85,7 +87,7 @@ def book_appointment(request, doctor_id):
             problem_description=request.POST.get('problem_description'),
             status='Pending'
         )
-        messages.success(request, "অ্যাপয়েন্টমেন্ট বুক করা হয়েছে।")
+        messages.success(request, "অ্যাপয়েন্টমেন্ট বুক করা হয়েছে।")
         return redirect('home')
     return redirect('doctor_list')
 
@@ -143,8 +145,15 @@ def analyze_prescription_view(request):
 # --- ADMIN INTERFACE ---
 @user_passes_test(lambda u: u.is_superuser)
 def admin_patient_list(request):
+    # নিবন্ধিত সকল রোগী
+    all_patients = PatientProfile.objects.all().order_by('-id')
+    # সকল অ্যাপয়েন্টমেন্ট
     appointments = Appointment.objects.all().order_by('-created_at')
-    return render(request, 'core/admin_patient_list.html', {'appointments': appointments})
+    
+    return render(request, 'core/admin_patient_list.html', {
+        'all_patients': all_patients,
+        'appointments': appointments
+    })
 
 @user_passes_test(lambda u: u.is_superuser)
 def create_prescription_view(request, appt_id):
