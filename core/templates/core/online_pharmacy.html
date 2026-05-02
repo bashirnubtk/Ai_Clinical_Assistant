@@ -1,0 +1,72 @@
+<div class="pharmacy-container">
+    <div class="pharmacy-card">
+        <div class="icon-section">
+            <span class="med-icon">💊</span>
+        </div>
+        <div class="content-section">
+            <span class="badge">নতুন সেবা</span>
+            <h3>অনলাইন ফার্মাসি</h3>
+            <p>হাসপিটালে ভর্তি থাকা বা বহির্বিভাগের সকল রোগী এখন ঘরে বসেই ঔষধ অর্ডার করতে পারবেন।</p>
+            <button class="buy-btn">ঔষধ কিনুন →</button>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* এই কোডটুকু চাইলে সে আলাদা CSS ফাইলে দিতে পারে অথবা এখানেও থাকতে পারে */
+    .pharmacy-container {
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+        font-family: 'SolaimanLipi', sans-serif;
+    }
+    .pharmacy-card {
+        background: #ffffff;
+        border-radius: 15px;
+        padding: 25px;
+        width: 320px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        border: 1px solid #eee;
+        position: relative;
+    }
+    .badge {
+        background: #fbc02d;
+        color: #000;
+        padding: 2px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: bold;
+        position: absolute;
+        top: -10px;
+        right: 20px;
+    }
+    .med-icon {
+        font-size: 50px;
+    }
+    .pharmacy-card h3 {
+        color: #1a237e;
+        margin: 15px 0 10px;
+        font-size: 22px;
+    }
+    .pharmacy-card p {
+        color: #666;
+        font-size: 14px;
+        line-height: 1.6;
+        margin-bottom: 20px;
+    }
+    .buy-btn {
+        background: #fbc02d;
+        color: #333;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 25px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .buy-btn:hover {
+        background: #f9a825;
+        transform: scale(1.05);
+    }
+</style>
